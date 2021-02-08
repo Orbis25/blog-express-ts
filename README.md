@@ -1,2 +1,2 @@
-# blog-express-ts
-Blog api developed in mongodb, express y typescript
+# api-blog-express-ts
+Api blog developed in mongodb, express y typescript
