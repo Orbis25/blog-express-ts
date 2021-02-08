@@ -104,3 +104,4 @@ dist
 .tern-port
 
 .env.production
+.package-lock.json
