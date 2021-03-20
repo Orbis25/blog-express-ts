@@ -1,25 +1,20 @@
 import mongoose, { Document } from "mongoose";
 import { SchemasNames } from "../../const";
+import { BaseModel, BaseSchema } from "../core/Base.model";
 
-const Schema = mongoose.Schema;
-
-export interface IUser extends Document {
-  name: String;
-  createdAt: String;
-  email: String;
-  password: String;
-  description: String;
-  photoUrl: String;
+export class UserModel extends BaseModel {
+  name!: string;
+  email!: string;
+  password!: string;
+  description!: string;
+  photoUrl!: string;
+  password_hash!: string;
 }
 
-const UserSchema = new Schema({
+const UserSchema = new BaseSchema<UserModel>({
   name: {
     type: String,
     required: [true, "El nombre es requerido"],
-  },
-  createdAt: {
-    type: Date,
-    default: new Date(),
   },
   email: {
     type: String,
@@ -29,6 +24,10 @@ const UserSchema = new Schema({
     type: String,
     required: [true, "La contraseña es requerida"],
   },
+  password_hash: {
+    type: String,
+    required: true,
+  },
   description: {
     type: String,
   },
@@ -37,7 +36,22 @@ const UserSchema = new Schema({
   },
 });
 
-export default mongoose.model<Document<IUser>>(
+UserSchema.methods.toJSON = function () {
+  var obj = this.toObject() as any;
+  delete obj.password;
+  delete obj.password_hash;
+  delete obj.__v;
+  return obj;
+};
+
+export default mongoose.model<Document<UserModel>>(
   SchemasNames.USER_SCHEMA,
   UserSchema
 );
+
+/*********View Models********/
+
+export class UserAuthViewModel {
+  email!: string;
+  password!: string;
+}

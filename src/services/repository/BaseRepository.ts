@@ -41,7 +41,7 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
   ): Promise<IResponseBase> {
     try {
       const result = await schema.findById(id);
-      if (!result) return { ok: false, error: "User not found" };
+      if (!result) return { ok: false, error: "entity not found" };
       return { ok: true, result };
     } catch (error) {
       return { ok: false, error: error.message };
@@ -63,7 +63,7 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
   ): Promise<IResponseBase> {
     try {
       const result = await schema.findByIdAndUpdate(id, doc, { new: true });
-      if (!result) return { ok: false, error: "User not found" };
+      if (!result) return { ok: false, error: "entity not found" };
       return { ok: true, result };
     } catch (error) {
       return { ok: false, error: error.message };
@@ -72,7 +72,7 @@ export default class BaseRepository<T> implements IBaseRepository<T> {
   async delete(id: String, schema: Model<Document<T>>): Promise<IResponseBase> {
     try {
       const result = await schema.findByIdAndDelete(id);
-      if (!result) return { ok: false, error: "User not found" };
+      if (!result) return { ok: false, error: "entity not found" };
       return { ok: true, result };
     } catch (error) {
       return { ok: false, error: error.message };
