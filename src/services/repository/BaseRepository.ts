@@ -2,7 +2,7 @@ import { Document, Model } from "mongoose";
 import { IPaginatedModel, IResponseBase } from "../../models/core";
 import IBaseRepository, { FullDocumentEnum } from "./IBaseRepository";
 
-export default class BaseRepository<T> implements IBaseRepository<T> {
+export default abstract class BaseRepository<T> implements IBaseRepository<T> {
   async getPaginatedAll(
     schema: Model<Document<T>>,
     page: number = 1,

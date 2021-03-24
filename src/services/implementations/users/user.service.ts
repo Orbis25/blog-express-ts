@@ -41,11 +41,18 @@ export default class UserService
       //generate a token
       return {
         ok: true,
-        result: jwt.sign({ result }, process.env.JWT_SECRET_KEY as string, {
-          expiresIn: "1h",
-          issuer: process.env.JWT_ISSUER as string,
-          audience: process.env.JWT_AUDIENCE as string,
-        }),
+        result: {
+          token: jwt.sign(
+            { user: result.email },
+            process.env.JWT_SECRET_KEY as string,
+            {
+              expiresIn: "1h",
+              issuer: process.env.JWT_ISSUER as string,
+              audience: process.env.JWT_AUDIENCE as string,
+            }
+          ),
+          user: result,
+        },
       };
     } catch (error) {
       return {
