@@ -8,12 +8,16 @@ import userSchema, {
 } from "../../../models/users/user.schema";
 import { IUserService } from "../../interfaces/";
 import IResponseBase from "../../../models/core/Response.model";
+import { STATE } from "../../../models/enums/State.enum";
 
 export default class UserService
   extends BaseRepository<UserModel>
   implements IUserService {
   async save(model: UserModel): Promise<IResponseBase> {
-    const exist = await userSchema.findOne({ email: model.email });
+    const exist = await userSchema.findOne({
+      email: model.email,
+      state: STATE.ACTIVE,
+    });
     if (exist) return { ok: false, error: `the ${model.email} all ready used` };
     model.password_hash = await this.generateSalt();
     model.password = await bcrypt.hash(model.password, model.password_hash);
@@ -42,15 +46,11 @@ export default class UserService
       return {
         ok: true,
         result: {
-          token: jwt.sign(
-            { user: result.email },
-            process.env.JWT_SECRET_KEY as string,
-            {
-              expiresIn: "1h",
-              issuer: process.env.JWT_ISSUER as string,
-              audience: process.env.JWT_AUDIENCE as string,
-            }
-          ),
+          token: jwt.sign({ result }, process.env.JWT_SECRET_KEY as string, {
+            expiresIn: "1h",
+            issuer: process.env.JWT_ISSUER as string,
+            audience: process.env.JWT_AUDIENCE as string,
+          }),
           user: result,
         },
       };

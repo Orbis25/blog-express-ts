@@ -5,7 +5,7 @@ export const jwtValidation = (
   req: Request | any,
   res: Response,
   next: NextFunction
-) => {
+): any => {
   const authHeader = req.headers["authorization"];
   if (!authHeader)
     return res.status(401).json({ ok: false, error: "unauthorized" });
@@ -14,10 +14,10 @@ export const jwtValidation = (
   jwt.verify(
     token,
     process.env.JWT_SECRET_KEY as string,
-    (err: any, user: any) => {
+    (err: any, response: any) => {
       if (err)
         return res.status(401).json({ ok: false, error: "unauthorized" });
-      req.user = user;
+      req.user = response.result;
       next();
     }
   );

@@ -1,6 +1,7 @@
 import { Document, Model } from "mongoose";
 import { IPaginatedModel, IResponseBase } from "../../models/core";
-import IBaseRepository, { FullDocumentEnum } from "./IBaseRepository";
+import IBaseRepository from "./IBaseRepository";
+import { STATE } from "../../models/enums/State.enum";
 
 export default abstract class BaseRepository<T> implements IBaseRepository<T> {
   async getPaginatedAll(
@@ -8,15 +9,18 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
     page: number = 1,
     qyt: number = 10,
     filter: Object = {},
-    full: FullDocumentEnum = FullDocumentEnum.Paginated
+    full: boolean
   ): Promise<IResponseBase> {
     try {
       if (full) {
-        return { ok: true, result: await schema.find(filter).exec() };
+        return {
+          ok: true,
+          result: await schema.find({ ...filter, state: STATE.ACTIVE }).exec(),
+        };
       }
 
       const dbResults = await schema
-        .find(filter)
+        .find({ ...filter, state: STATE.ACTIVE })
         .skip((page - 1) * qyt)
         .limit(qyt)
         .exec();
@@ -24,7 +28,7 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
       const total = await schema.countDocuments();
       const result = {
         page,
-        pages: Math.round(total / qyt) + 1,
+        pages: Math.ceil(total / qyt),
         qyt: qyt,
         total,
         results: dbResults,
@@ -40,7 +44,8 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
     id: String
   ): Promise<IResponseBase> {
     try {
-      const result = await schema.findById(id);
+      const filter = { _id: id, state: STATE.ACTIVE };
+      const result = await schema.findOne(filter as any).exec();
       if (!result) return { ok: false, error: "entity not found" };
       return { ok: true, result };
     } catch (error) {
@@ -62,7 +67,8 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
     schema: Model<Document<T>>
   ): Promise<IResponseBase> {
     try {
-      const result = await schema.findByIdAndUpdate(id, doc, { new: true });
+      const filter = { _id: id, state: STATE.ACTIVE } as any;
+      const result = await schema.findOneAndUpdate(filter, doc, { new: true });
       if (!result) return { ok: false, error: "entity not found" };
       return { ok: true, result };
     } catch (error) {
@@ -71,7 +77,12 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
   }
   async delete(id: String, schema: Model<Document<T>>): Promise<IResponseBase> {
     try {
-      const result = await schema.findByIdAndDelete(id);
+      const filter = { _id: id, state: STATE.ACTIVE } as any;
+      const result = await schema.findOneAndUpdate(
+        filter,
+        { state: STATE.REMOVED } as any,
+        { new: true }
+      );
       if (!result) return { ok: false, error: "entity not found" };
       return { ok: true, result };
     } catch (error) {

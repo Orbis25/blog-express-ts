@@ -20,7 +20,10 @@ export class BaseSchema<TDocument extends Document> extends Schema<TDocument> {
         type: Date,
         default: new Date(),
       },
-      state: STATE.ACTIVE,
+      state: {
+        type: Number,
+        default: STATE.ACTIVE,
+      },
     });
   }
 }
