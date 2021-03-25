@@ -1,5 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
-import { SchemasNames } from "../../const";
+import { SCHEMAS_NAMES } from "../../const";
 import { BaseModel } from "../core";
 import { BaseSchema } from "../core/Base.model";
 
@@ -24,12 +24,12 @@ export const PostSchema = new BaseSchema<PostModel>({
   },
   user: {
     type: Schema.Types.ObjectId,
-    ref: SchemasNames.USER_SCHEMA,
+    ref: SCHEMAS_NAMES.USER_SCHEMA,
     required: [true, "userId is required"],
   },
 });
 
 export default mongoose.model<Document<PostModel>>(
-  SchemasNames.POST_SCHEMA,
+  SCHEMAS_NAMES.POST_SCHEMA,
   PostSchema
 );

@@ -9,23 +9,36 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
     page: number = 1,
     qyt: number = 10,
     filter: Object = {},
-    full: boolean
+    full: boolean = false,
+    related_entities?: Array<keyof T>
   ): Promise<IResponseBase> {
     try {
+      let schema_results = schema.find({ ...filter, state: STATE.ACTIVE });
+
+      //get relations
+      if (related_entities) {
+        related_entities.forEach((entity) => {
+          schema_results = schema_results.populate(entity);
+        });
+      }
+
+      //return full data
       if (full) {
         return {
           ok: true,
-          result: await schema.find({ ...filter, state: STATE.ACTIVE }).exec(),
+          result: await schema_results.exec(),
         };
       }
 
-      const dbResults = await schema
-        .find({ ...filter, state: STATE.ACTIVE })
+      //paginate data
+      const dbResults = await schema_results
         .skip((page - 1) * qyt)
         .limit(qyt)
         .exec();
 
       const total = await schema.countDocuments();
+
+      //prepare the object
       const result = {
         page,
         pages: Math.ceil(total / qyt),
@@ -41,13 +54,22 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
   }
   async getById(
     schema: Model<Document<T>>,
-    id: String
+    id: String,
+    related_entities?: Array<keyof T>
   ): Promise<IResponseBase> {
     try {
       const filter = { _id: id, state: STATE.ACTIVE };
-      const result = await schema.findOne(filter as any).exec();
-      if (!result) return { ok: false, error: "entity not found" };
-      return { ok: true, result };
+      let result = schema.findOne(filter as any);
+
+      //get relations
+      if (related_entities) {
+        related_entities.forEach((entity) => {
+          result = result.populate(entity);
+        });
+      }
+      const entity = await result.exec();
+      if (!entity) return { ok: false, error: "entity not found" };
+      return { ok: true, result: entity };
     } catch (error) {
       return { ok: false, error: error.message };
     }

@@ -13,6 +13,7 @@ app.post("/post", jwtValidation, async (req: Request, res: Response) => {
   const { user } = req as any;
   const body = (req.body as PostModel) || null;
   body.user = user._id;
+  console.log("user ", user);
   if (!body) return res.status(400).json("invalid body");
   const result = await _postService.create(new PostSchema(body));
   if (!result.ok) return res.status(400).json(result);
@@ -46,7 +47,7 @@ app.put("/post/:id", jwtValidation, async (req: Request, res: Response) => {
 
 app.get("/post/:id", jwtValidation, async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await _postService.getById(postSchema, id);
+  const result = await _postService.getById(postSchema, id, ["user"]);
   if (!result.ok) return res.status(400).json(result);
   return res.status(200).json(result);
 });

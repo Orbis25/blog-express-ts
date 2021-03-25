@@ -1,6 +1,7 @@
-import mongoose, { Document } from "mongoose";
-import { SchemasNames } from "../../const";
+import mongoose, { Document, Schema } from "mongoose";
+import { SCHEMAS_NAMES } from "../../const";
 import { BaseModel, BaseSchema } from "../core/Base.model";
+import { PostModel } from "../posts/post.schema";
 
 export class UserModel extends BaseModel {
   name!: string;
@@ -45,7 +46,7 @@ UserSchema.methods.toJSON = function () {
 };
 
 export default mongoose.model<Document<UserModel>>(
-  SchemasNames.USER_SCHEMA,
+  SCHEMAS_NAMES.USER_SCHEMA,
   UserSchema
 );
 

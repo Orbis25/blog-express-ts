@@ -1,3 +1,3 @@
-import SchemasNames from "./schemas.const";
+import SCHEMAS_NAMES from "./schemas.const";
 
-export { SchemasNames };
+export { SCHEMAS_NAMES };

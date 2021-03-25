@@ -29,6 +29,7 @@ export default class UserService
       //get the entity
       const doc = await userSchema.findOne({
         email: model.email,
+        state: STATE.ACTIVE,
       });
 
       //conver to typed model

@@ -7,9 +7,14 @@ export interface IRead<T> {
     page: number,
     qyt: number,
     filter: Object,
-    full: boolean
+    full: boolean,
+    related_entities?: Array<keyof T>
   ): Promise<IResponseBase>;
-  getById(schema: Model<Document<T>>, id: String): Promise<IResponseBase>;
+  getById(
+    schema: Model<Document<T>>,
+    id: String,
+    related_entities?: Array<keyof T>
+  ): Promise<IResponseBase>;
 }
 
 export interface IWrite<T> {
