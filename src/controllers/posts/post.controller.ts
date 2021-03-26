@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import PostService from "../../services/implementations/posts/post.service";
+import { PostService } from "../../services/implementations/";
 import PostSchema, { PostModel } from "../../models/posts/post.schema";
 import { jwtValidation } from "../../middlewares/jwt.middleware";
 import postSchema from "../../models/posts/post.schema";
