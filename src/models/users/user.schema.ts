@@ -10,6 +10,7 @@ export class UserModel extends BaseModel {
   description!: string;
   photoUrl!: string;
   password_hash!: string;
+  post!: PostModel[];
 }
 
 const UserSchema = new BaseSchema<UserModel>({
@@ -35,6 +36,12 @@ const UserSchema = new BaseSchema<UserModel>({
   photoUrl: {
     type: String,
   },
+  posts: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: SCHEMAS_NAMES.POST_SCHEMA,
+    },
+  ],
 });
 
 UserSchema.methods.toJSON = function () {

@@ -13,7 +13,7 @@ export class CommentModel extends BaseModel {
 export const CommentSchema = new BaseSchema<CommentModel>({
   text: {
     type: String,
-    require: [true, "text is required"],
+    required: [true, "text is required"],
   },
   user: {
     type: Schema.Types.ObjectId,
@@ -22,6 +22,7 @@ export const CommentSchema = new BaseSchema<CommentModel>({
   post: {
     type: Schema.Types.ObjectId,
     ref: SCHEMAS_NAMES.POST_SCHEMA,
+    required: [true, "post is required"],
   },
 });
 

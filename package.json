@@ -28,6 +28,7 @@
     "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
     "@types/jsonwebtoken": "^8.5.1",
+    "@types/mongoose-deep-populate": "^2.0.35",
     "@types/swagger-jsdoc": "^6.0.0",
     "@types/swagger-ui-express": "^4.1.2"
   }

@@ -1,8 +1,7 @@
 import express, { Request, Response } from "express";
 import { PostService } from "../../services/implementations/";
-import PostSchema, { PostModel } from "../../models/posts/post.schema";
 import { jwtValidation } from "../../middlewares/jwt.middleware";
-import postSchema from "../../models/posts/post.schema";
+import PostSchema, { PostModel } from "../../models/posts/post.schema";
 import { stringToBoolean } from "../../utils/helpers/string.helpers";
 
 const app = express();
@@ -26,7 +25,7 @@ app.get("/posts", jwtValidation, async (req: Request, res: Response) => {
   const isFull = stringToBoolean(req.query.full as string) || false;
 
   const result = await _postService.getPaginatedAll(
-    postSchema,
+    PostSchema,
     page,
     qyt,
     undefined,
@@ -40,21 +39,24 @@ app.put("/post/:id", jwtValidation, async (req: Request, res: Response) => {
   const body = (req.body as PostModel) || null;
   const { id } = req.params;
   if (!body) return res.status(400).json("invalid body");
-  const result = await _postService.update(id, body, postSchema);
+  const result = await _postService.update(id, body, PostSchema);
   if (!result.ok) return res.status(400).json(result);
   return res.status(200).json(result);
 });
 
 app.get("/post/:id", jwtValidation, async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await _postService.getById(postSchema, id, ["user"]);
+  const result = await _postService.getById(PostSchema, id, [
+    "user",
+    "comments",
+  ]);
   if (!result.ok) return res.status(400).json(result);
   return res.status(200).json(result);
 });
 
 app.delete("/post/:id", jwtValidation, async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await _postService.delete(id, postSchema);
+  const result = await _postService.delete(id, PostSchema);
   if (!result.ok) return res.status(400).json(result);
   return res.status(200).json(result);
 });

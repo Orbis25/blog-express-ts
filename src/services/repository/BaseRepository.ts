@@ -30,13 +30,9 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
         };
       }
 
-      //paginate data
-      const dbResults = await schema_results
-        .skip((page - 1) * qyt)
-        .limit(qyt)
-        .exec();
-
-      const total = await schema.countDocuments();
+      const total = await schema
+        .find({ ...filter, state: STATE.ACTIVE })
+        .countDocuments();
 
       //prepare the object
       const result = {
@@ -44,7 +40,10 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
         pages: Math.ceil(total / qyt),
         qyt: qyt,
         total,
-        results: dbResults,
+        results: await schema_results
+          .skip((page - 1) * qyt)
+          .limit(qyt)
+          .exec(),
       } as IPaginatedModel<Document<T>>;
 
       return { ok: true, result: result };
@@ -58,8 +57,8 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
     related_entities?: Array<keyof T>
   ): Promise<IResponseBase> {
     try {
-      const filter = { _id: id, state: STATE.ACTIVE };
-      let result = schema.findOne(filter as any);
+      const filter = { _id: id, state: STATE.ACTIVE } as any;
+      let result = schema.findOne(filter);
 
       //get relations
       if (related_entities) {
@@ -67,6 +66,7 @@ export default abstract class BaseRepository<T> implements IBaseRepository<T> {
           result = result.populate(entity);
         });
       }
+
       const entity = await result.exec();
       if (!entity) return { ok: false, error: "entity not found" };
       return { ok: true, result: entity };

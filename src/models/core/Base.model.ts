@@ -9,21 +9,24 @@ export class BaseModel extends Document {
 }
 
 export class BaseSchema<TDocument extends Document> extends Schema<TDocument> {
-  constructor(object: Object) {
-    super({
-      ...object,
-      createdAt: {
-        type: Date,
-        default: new Date(),
+  constructor(object: Object, options?: Object) {
+    super(
+      {
+        ...object,
+        createdAt: {
+          type: Date,
+          default: new Date(),
+        },
+        updatedAt: {
+          type: Date,
+          default: new Date(),
+        },
+        state: {
+          type: Number,
+          default: STATE.ACTIVE,
+        },
       },
-      updatedAt: {
-        type: Date,
-        default: new Date(),
-      },
-      state: {
-        type: Number,
-        default: STATE.ACTIVE,
-      },
-    });
+      options
+    );
   }
 }
