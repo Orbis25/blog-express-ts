@@ -1,6 +1,4 @@
 import BaseRepository from "../../repository/BaseRepository";
-
-import IBaseRepository from "../../repository/IBaseRepository";
 import { IResponseBase } from "../../../models/core";
 import { STATE } from "../../../models/enums/State.enum";
 import { Document } from "mongoose";
@@ -8,10 +6,12 @@ import IPaginatedModel from "../../../models/core/Paginated.model";
 import CommentSchema, {
   CommentModel,
 } from "../../../models/comments/comment.model";
+import { ICommentService } from "../../interfaces";
+import PostSchema from "../../../models/posts/post.schema";
 
 export default class CommentService
   extends BaseRepository<CommentModel>
-  implements IBaseRepository<CommentModel> {
+  implements ICommentService {
   async getAllComments(
     postId: string,
     page: number,

@@ -3,13 +3,16 @@ import { jwtValidation } from "../../middlewares/jwt.middleware";
 
 import CommentService from "../../services/implementations/comments/comment.service";
 import { stringToBoolean } from "../../utils/helpers/string.helpers";
+import PostService from "../../services/implementations/posts/post.service";
 import CommentSchema, {
   CommentModel,
 } from "../../models/comments/comment.model";
+import PostSchema from "../../models/posts/post.schema";
 
 const app = express();
 
 const _commentService = new CommentService();
+const _postService = new PostService();
 
 app.get(
   "/comments/:postId",
@@ -34,6 +37,8 @@ app.post("/comment", jwtValidation, async (req: Request, res: Response) => {
   const body = req.body as CommentModel;
   const { user }: any = req;
   body.user = user._id;
+  const existPost = await _postService.getById(PostSchema, body.post);
+  if (!existPost.ok) return res.status(404).json(existPost);
   const result = await _commentService.create(new CommentSchema(body));
   if (!result.ok) return res.status(400).json(result);
   return res.status(200).json(result);

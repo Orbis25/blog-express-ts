@@ -1,13 +1,11 @@
 import { BaseModel, BaseSchema } from "../core/Base.model";
-import { UserModel } from "../users/user.schema";
-import { PostModel } from "../posts/post.schema";
 import mongoose, { Schema, Document } from "mongoose";
 import { SCHEMAS_NAMES } from "../../const";
 
 export class CommentModel extends BaseModel {
   text!: string;
-  user!: UserModel;
-  post!: PostModel;
+  user!: string;
+  post!: string;
 }
 
 export const CommentSchema = new BaseSchema<CommentModel>({
