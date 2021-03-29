@@ -82,7 +82,6 @@ export default class UserService
     const user = await userSchema.findOne(filter);
     if (user) {
       const result = (user as unknown) as UserModel;
-      console.log(result.photoUrl);
       if (result.photoUrl) {
         try {
           if (fs.existsSync(path + result.photoUrl)) {
