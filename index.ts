@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import fileUpload from "express-fileupload";
 
 import { loadEnv, createDbConnection } from "./src/config/index";
 import Routes from "./src/routes/index.routes";
@@ -14,7 +15,17 @@ app.use(express.static(__dirname + "/public"));
 
 //middlewares
 app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 app.use(cors({ origin: "*" }));
+app.use(
+  fileUpload({
+    preserveExtension: true,
+  })
+);
 
 //routes
 app.use(Routes);

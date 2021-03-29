@@ -9,7 +9,10 @@ import userSchema, {
 import { IUserService } from "../../interfaces/";
 import IResponseBase from "../../../models/core/Response.model";
 import { STATE } from "../../../models/enums/State.enum";
-
+import fileUpload from "express-fileupload";
+import fs from "fs";
+import { moveFile } from "../../../utils/helpers/files.helpers";
+import path from "path";
 export default class UserService
   extends BaseRepository<UserModel>
   implements IUserService {
@@ -72,5 +75,55 @@ export default class UserService
     hash: string
   ): Promise<Boolean> {
     return await bcrypt.compare(password, hash);
+  }
+
+  private async removeImageProfile(id: string, path: string) {
+    const filter = { state: STATE.ACTIVE, _id: id } as any;
+    const user = await userSchema.findOne(filter);
+    if (user) {
+      const result = (user as unknown) as UserModel;
+      console.log(result.photoUrl);
+      if (result.photoUrl) {
+        try {
+          if (fs.existsSync(path + result.photoUrl)) {
+            fs.unlinkSync(path + result.photoUrl);
+          }
+        } catch (error) {
+          throw new Error(error);
+        }
+      }
+    }
+  }
+
+  async uploadPic(
+    files: fileUpload.FileArray | undefined,
+    id: string
+  ): Promise<IResponseBase> {
+    const { profile_pic } = files as any;
+
+    if (!files || Object.keys(files).length === 0)
+      return { ok: false, error: "file required" };
+
+    const folder = "profiles/";
+    const base_path =
+      (process.env.FILE_DESTINATION as string) || "/public/uploads/";
+    const file_path = process.cwd() + base_path + folder;
+    const newFile = Date.now() + id + path.extname(profile_pic.name);
+
+    //if user have image remove this
+    await this.removeImageProfile(id, file_path);
+
+    if (fs.existsSync(file_path)) {
+      const result = await moveFile(profile_pic, file_path + newFile);
+      if (result) return { ok: false, result: "error upload file" };
+      await this.update(id, { photoUrl: newFile } as UserModel, userSchema);
+      return { ok: true, result: "uploaded file" };
+    } else {
+      fs.mkdirSync(file_path, { recursive: true });
+      const result = await moveFile(profile_pic, file_path + newFile);
+      if (result) return { ok: false, result: "error upload file" };
+      await this.update(id, { photoUrl: newFile } as UserModel, userSchema);
+      return { ok: true, result: "uploaded file" };
+    }
   }
 }
