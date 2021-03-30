@@ -97,4 +97,15 @@ app.get(
   }
 );
 
+app.post(
+  "/post/upload/:id",
+  jwtValidation,
+  async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const result = await _postService.uploadImage(req.files, id);
+    if (!result.ok) return res.status(500).json(result);
+    return res.status(200).json(result);
+  }
+);
+
 export default app;

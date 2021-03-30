@@ -105,3 +105,4 @@ dist
 
 .env.production
 .package-lock.json
+/public/uploads
