@@ -13,6 +13,7 @@ import fileUpload from "express-fileupload";
 import fs from "fs";
 import { moveFile } from "../../../utils/helpers/files.helpers";
 import path from "path";
+import { PROFILE_FOLDER } from "../../../const/uploads.const";
 export default class UserService
   extends BaseRepository<UserModel>
   implements IUserService {
@@ -103,10 +104,9 @@ export default class UserService
     if (!files || Object.keys(files).length === 0)
       return { ok: false, error: "file required" };
 
-    const folder = "profiles/";
     const base_path =
       (process.env.FILE_DESTINATION as string) || "/public/uploads/";
-    const file_path = process.cwd() + base_path + folder;
+    const file_path = process.cwd() + base_path + PROFILE_FOLDER;
     const newFile = Date.now() + id + path.extname(profile_pic.name);
 
     //if user have image remove this

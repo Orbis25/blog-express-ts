@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { SCHEMAS_NAMES } from "../../const";
+import { PROFILE_FOLDER } from "../../const/uploads.const";
 import { BaseModel, BaseSchema } from "../core/Base.model";
 import { PostModel } from "../posts/post.schema";
 
@@ -39,6 +40,7 @@ const UserSchema = new BaseSchema<UserModel>({
 
 UserSchema.methods.toJSON = function () {
   var obj = this.toObject() as any;
+  obj.photoUrl = process.env.FILE_UPLOADED + PROFILE_FOLDER + obj.photoUrl;
   delete obj.password;
   delete obj.password_hash;
   delete obj.__v;

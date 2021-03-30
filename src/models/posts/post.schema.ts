@@ -1,5 +1,6 @@
 import mongoose, { Document, Schema } from "mongoose";
 import { SCHEMAS_NAMES } from "../../const";
+import { POST_FOLDER } from "../../const/uploads.const";
 import { BaseModel } from "../core";
 import { BaseSchema } from "../core/Base.model";
 
@@ -28,6 +29,13 @@ const PostSchema = new BaseSchema<PostModel>({
     required: [true, "user is required"],
   },
 });
+
+PostSchema.methods.toJSON = function () {
+  let obj = this.toObject() as PostModel;
+  obj.photo_url = process.env.FILE_UPLOADED + POST_FOLDER + obj.photo_url;
+  delete obj.__v;
+  return obj;
+};
 
 export default mongoose.model<Document<PostModel>>(
   SCHEMAS_NAMES.POST_SCHEMA,

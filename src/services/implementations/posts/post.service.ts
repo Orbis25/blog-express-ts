@@ -8,6 +8,7 @@ import fs from "fs";
 import path from "path";
 import { moveFile } from "../../../utils/helpers/files.helpers";
 import { STATE } from "../../../models/enums/State.enum";
+import { POST_FOLDER } from "../../../const/uploads.const";
 
 export default class PostService
   extends BaseRepository<PostModel>
@@ -87,10 +88,9 @@ export default class PostService
     if (!files || Object.keys(files).length === 0)
       return { ok: false, error: "file required" };
 
-    const folder = "post/";
     const base_path =
       (process.env.FILE_DESTINATION as string) || "/public/uploads/";
-    const file_path = process.cwd() + base_path + folder;
+    const file_path = process.cwd() + base_path + POST_FOLDER;
     const newFile = Date.now() + id + path.extname(photo.name);
 
     //if post have image remove this
